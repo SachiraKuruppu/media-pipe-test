@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import React, { MouseEvent, useState } from 'react';
 import './App.css';
-// import WebcamDisplay from './components/webcam';
 import { IObjectDetector, TYPES, container } from './services';
 import { DetectedObject } from './services/object-detector';
 import { DetectionMask } from './components/detection-mask';
+import WebcamObjectDetector from './components/webcam-object-detector';
 
 function App() {
   const [detectionMasks, setDetectionMasks] = useState<JSX.Element[]>([]);
@@ -41,8 +41,8 @@ function App() {
     <div className="container my-5">
       {detectionMasks}
 
-      <img src="./turning-left-into-a-side-road.jpg" alt="" onClick={handleClick} />
-      {/* <WebcamDisplay /> */}
+      {/* <img src="./turning-left-into-a-side-road.jpg" alt="" onClick={handleClick} /> */}
+      <WebcamObjectDetector />
     </div>
   );
 }
