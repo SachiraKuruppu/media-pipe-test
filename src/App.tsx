@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import React, { useState } from 'react';
 import './App.css';
-import { DetectedObject } from './services/object-detector';
+import { DetectedObject } from './services';
 import { DetectionMask } from './components/detection-mask';
 import WebcamObjectDetector from './components/webcam-object-detector';
 

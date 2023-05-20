@@ -1,15 +1,21 @@
 import { Container } from "inversify";
-import { IObjectDetector, EfficientNetLiteDetector } from "./object-detector";
+import { IObjectDetector, DetectedObject, EfficientNetLiteDetector } from "./object-detector";
+
+type Provider<T> = () => Promise<T>;
 
 const TYPES = {
     IObjectDetector: Symbol.for("IObjectDetector").toString()
 };
 
 const container = new Container();
-container.bind<IObjectDetector>(TYPES.IObjectDetector).to(EfficientNetLiteDetector);
+container.bind<Provider<IObjectDetector>>(TYPES.IObjectDetector).toProvider<IObjectDetector>(context => {
+    return () => EfficientNetLiteDetector.create('VIDEO');
+});
 
 export { 
-    container, 
+    container,
     TYPES,
+    type Provider,
     type IObjectDetector,
+    type DetectedObject,
 };

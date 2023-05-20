@@ -1,8 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Webcam from 'react-webcam';
-import { IObjectDetector, TYPES, container } from '../../services';
-import { DetectedObject } from '../../services/object-detector';
+import { DetectedObject, IObjectDetector, Provider, TYPES, container } from '../../services';
 
 interface WebcamObjectDetectorProps {
   onDetect: (offsetX: number, offsetY: number, ratio: number, detections: DetectedObject[]) => void;
@@ -13,12 +12,12 @@ function WebcamObjectDetector({ onDetect }: WebcamObjectDetectorProps) {
   const webcamRef = useRef<Webcam>(null);
 
   const handleStartDetection = useCallback(async () => {
-    const objectDetector = container.get<IObjectDetector>(TYPES.IObjectDetector);
-    await objectDetector.initialize('VIDEO');
+    const objectDetectorProvider = container.get<Provider<IObjectDetector>>(TYPES.IObjectDetector);
+    const objectDetector = await objectDetectorProvider();
 
     const makeDetections = async () => {
       if (webcamRef.current !== null && webcamRef.current.video !== null) {
-        const detections = await objectDetector.detectObjectsInVideo(webcamRef.current?.video);
+        const detections = await objectDetector.detectObjects(webcamRef.current?.video);
         console.log(detections);
 
         onDetect(webcamRef.current.video.offsetLeft, webcamRef.current.video.offsetTop, 1, detections);

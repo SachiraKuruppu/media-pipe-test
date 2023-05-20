@@ -9,7 +9,5 @@ export interface DetectedObject {
 };
 
 export interface IObjectDetector {
-    initialize: (runningMode?: 'IMAGE' | 'VIDEO') => Promise<void>
-    detectObjects: (image: HTMLImageElement | ImageData) => Promise<DetectedObject[]>
-    detectObjectsInVideo: (video: HTMLVideoElement) => Promise<DetectedObject[]>
+    detectObjects: (imageOrVideo: HTMLImageElement | HTMLVideoElement) => Promise<DetectedObject[]>
 };
