@@ -1,5 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
+import React, { useRef, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { DetectedObject, IObjectDetector, Provider, TYPES, container } from '../../services';
 
@@ -8,49 +7,37 @@ interface WebcamObjectDetectorProps {
 };
 
 function WebcamObjectDetector({ onDetect }: WebcamObjectDetectorProps) {
-  const [isDetectionStarted, setDetectionStarted] = useState(false);
   const webcamRef = useRef<Webcam>(null);
+  const animationRef = useRef<number | undefined>(undefined);
 
-  const handleStartDetection = useCallback(async () => {
+  useEffect(() => {
     const objectDetectorProvider = container.get<Provider<IObjectDetector>>(TYPES.IObjectDetector);
-    const objectDetector = await objectDetectorProvider();
+    objectDetectorProvider().then(objectDetector => {
+      
+      const makeDetections = async () => {
+        if (
+          webcamRef.current !== null && 
+          webcamRef.current.video !== null
+        ) {
+          const detections = await objectDetector.detectObjects(webcamRef.current?.video);
+          console.log(detections);
+    
+          onDetect(webcamRef.current.video.offsetLeft, webcamRef.current.video.offsetTop, 1, detections);
+          animationRef.current = requestAnimationFrame(makeDetections);
+        }
+      };
 
-    const makeDetections = async () => {
-      if (webcamRef.current !== null && webcamRef.current.video !== null) {
-        const detections = await objectDetector.detectObjects(webcamRef.current?.video);
-        console.log(detections);
+      makeDetections();
+    });
 
-        onDetect(webcamRef.current.video.offsetLeft, webcamRef.current.video.offsetTop, 1, detections);
+    return () => {
+      if (animationRef.current !== undefined) {
+        cancelAnimationFrame(animationRef.current);
       }
-
-      requestAnimationFrame(makeDetections);
     };
-
-    await makeDetections();
-  }, [webcamRef, onDetect]);
-
-  const handleDetectionToggle = useCallback(() => {
-    setDetectionStarted(!isDetectionStarted);
-
-    if (!isDetectionStarted) {
-      handleStartDetection();
-    }
-    else {
-      onDetect(0, 0, 0, []);
-    }
-  }, [handleStartDetection, isDetectionStarted, onDetect]);
+  }, [onDetect]);
   
-  return (
-    <div
-      className="rounded border h-500 d-flex flex-column align-items-center justify-content-center"
-      style={{
-        height: "80vh"
-      }}
-    >
-      <Webcam ref={webcamRef} />
-      <Button onClick={handleDetectionToggle}>{isDetectionStarted ? 'Stop Detection' : 'Start Detection'}</Button>
-    </div>
-  );
+  return (<Webcam ref={webcamRef} />);
 }
 
 export default WebcamObjectDetector;
