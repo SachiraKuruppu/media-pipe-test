@@ -4,7 +4,6 @@ import './App.css';
 import { DetectedObject } from './services';
 import { DetectionMask } from './components/detection-mask';
 import WebcamObjectDetector from './components/webcam-object-detector';
-import { Button } from 'react-bootstrap';
 
 function App() {
   const [detectionMasks, setDetectionMasks] = useState<JSX.Element[]>([]);

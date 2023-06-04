@@ -1,4 +1,4 @@
-import React, {useRef, useState, useCallback, useEffect} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import Webcam from 'react-webcam';
 import { DetectedObject, IObjectDetector, Provider, TYPES, container } from '../../services';
 import {Button} from "react-bootstrap";
@@ -51,7 +51,7 @@ function WebcamObjectDetector({ onDetect }: WebcamObjectDetectorProps) {
       stopDetection();
       onDetect(0, 0, 1, []);
     }
-  }, [isDetectionStarted]);
+  }, [isDetectionStarted, onDetect]);
 
   const enabledDetectionView = (
       <>
